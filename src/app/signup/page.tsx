@@ -12,6 +12,7 @@ export default function SignUp() {
   const [isEmailValid, setIsEmailValid] = useState(false);
   const [isPasswordValid, setIsPasswordValid] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const validateEmail = () => {
     const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
@@ -45,11 +46,14 @@ export default function SignUp() {
     e.preventDefault();
     if (!validateEmail() || !validatePassword()) return;
 
+    setIsLoading(true);
     const { error } = await supabase.auth.signUp({ email, password });
+    setIsLoading(false);
+
     if (error) {
       setError(error.message);
     } else {
-      setSuccess('Pendaftaran berhasil! Silakan cek email Anda untuk verifikasi.');
+      setSuccess('Pendaftaran berhasil! Silakan <a href="/signin" class="text-blue-500 hover:underline">login di sini</a>.');
     }
   };
 
@@ -87,14 +91,40 @@ export default function SignUp() {
           </div>
           <button
             type="submit"
-            className={`p-2 rounded ${isEmailValid && isPasswordValid ? 'bg-blue-500 text-white hover:bg-blue-600 cursor-pointer' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
-            disabled={!isEmailValid || !isPasswordValid}
+            className={`p-2 rounded ${isEmailValid && isPasswordValid && !isLoading ? 'bg-blue-500 text-white hover:bg-blue-600 cursor-pointer' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
+            disabled={!isEmailValid || !isPasswordValid || isLoading}
           >
-            Sign Up
+            {isLoading ? (
+              <div className="flex items-center justify-center">
+                <svg
+                  className="animate-spin h-5 w-5 mr-2 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                  ></path>
+                </svg>
+                Mendaftarkan...
+              </div>
+            ) : (
+              'Sign Up'
+            )}
           </button>
         </form>
         {error && <p className="text-red-500 mt-4">{error}</p>}
-        {success && <p className="text-green-500 mt-4">{success}</p>}
+        {success && <p className="text-green-500 mt-4" dangerouslySetInnerHTML={{ __html: success }}></p>}
       </div>
     </div>
   );
