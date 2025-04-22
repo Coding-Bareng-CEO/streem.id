@@ -32,7 +32,7 @@ export default function Home() {
     <div className="app-container flex flex-col min-h-screen">
       <Header />
       <div className="flex flex-1">
-        <Sidebar className="w-1/4 p-4" />
+        <Sidebar />
         <div className="w-3/4 p-4">
           {isSignedIn ? (
             <InputBox />

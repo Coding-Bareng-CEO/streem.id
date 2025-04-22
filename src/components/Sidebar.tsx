@@ -3,7 +3,7 @@ import { FaHome, FaHashtag, FaBell } from 'react-icons/fa';
 
 const Sidebar = () => {
   return (
-    <div className="sidebar pl-4 pt-1">
+    <div className="sidebar pl-4 pt-1 w-1/4 p-4">
       <nav>
         <ul>
           <li className="flex items-center gap-2"><FaHome /><a href="#">Home</a></li>
