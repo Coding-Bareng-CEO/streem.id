@@ -24,7 +24,7 @@ const TweetList = () => {
       } else {
         const formattedData = data.map(tweet => ({
           ...tweet,
-          users: tweet.users[0] // Assuming there's always one user per tweet
+          users: tweet.users.length > 0 ? tweet.users[0] : { fullname: '', username: '', avatar_url: '' }
         }));
         setTweets(formattedData);
       }
