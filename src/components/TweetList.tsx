@@ -42,7 +42,7 @@ const TweetList = () => {
           userId={tweet.user_id}
           fullname={tweet.users.fullname}
           username={tweet.users.username}
-          avatarUrl={tweet.users.avatar_url}
+          avatarUrl={tweet.users.avatar_url || null}
         />
       ))}
     </div>
