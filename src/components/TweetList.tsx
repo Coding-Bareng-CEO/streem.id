@@ -22,7 +22,11 @@ const TweetList = () => {
       if (error) {
         console.error('Error fetching tweets:', error);
       } else {
-        setTweets(data);
+        const formattedData = data.map(tweet => ({
+          ...tweet,
+          users: tweet.users[0] // Assuming there's always one user per tweet
+        }));
+        setTweets(formattedData);
       }
     };
 
