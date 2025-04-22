@@ -22,7 +22,7 @@ const TweetList = () => {
       if (error) {
         console.error('Error fetching tweets:', error);
       } else {
-        setTweets(data);
+        setTweets(data as unknown as TweetType[]);
       }
     };
 
