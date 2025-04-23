@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     description: "Streem your 400 ELS Progress!",
     images: [
       {
-        url: "http://streemid.netlify.app/og.png",
+        url: "http://streem.id/og.png",
         width: 1200,
         height: 630,
         alt: "Streem Open Graph Image",
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     description: "Join Streem and track your 400 ELS Progress with ease and style!",
     images:  [
       {
-        url: "http://streemid.netlify.app/og.png",
+        url: "http://streem.id/og.png",
         width: 1200,
         height: 630,
         alt: "Streem your 400 ELS Progress!",

@@ -33,7 +33,7 @@ export default function Home() {
       <Header />
       <div className="flex flex-1">
         <Sidebar />
-        <div className="w-3/4 p-4">
+        <div className="w-full p-4 mx-auto">
           {isSignedIn ? (
             <InputBox />
           ) : (
