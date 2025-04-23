@@ -18,13 +18,13 @@ export default function SignIn() {
   }, []);
 
   const handleSignIn = async (e: React.FormEvent) => {
-    // e.preventDefault();
-    console.log(email, password);
+    e.preventDefault();
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error){
-      console.log("error", error);
       setError(error.message);
-    } 
+    } else{
+      window.location.href = "/";
+    }
   };
 
   return (
