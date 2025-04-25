@@ -21,6 +21,7 @@ export default function SignUp() {
   const [fullname, setFullname] = useState('');
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     fetch('/anim/success.json')
@@ -80,6 +81,7 @@ export default function SignUp() {
     const file = files[0];
     setError(''); // Reset error message
     setUploadProgress(0); // Reset progress
+    setIsUploading(true); // Set uploading state
     try {
       const response = await uploadFileWithProgress(file);
       const { data } = supabase.storage
@@ -89,6 +91,8 @@ export default function SignUp() {
     } catch (error) {
       console.log(error);
       setError('Failed to upload avatar.');
+    } finally {
+      setIsUploading(false); // Reset uploading state
     }
   };
 
@@ -186,13 +190,10 @@ export default function SignUp() {
                 {showPassword ? "🙈" : "👁️"}
               </span>
             </div>
-            <div className="mb-4">
+            <div className="mb-4 flex items-center">
               <input type="file" onChange={handleAvatarUpload} style={{ display: 'none' }} id="fileInput" />
-              <button type="button" className="bg-blue-500 text-white hover:bg-blue-600 cursor-pointer p-2 rounded" onClick={() => document.getElementById('fileInput').click()}>Choose file</button>
-              {uploadProgress > 0 && uploadProgress < 100 && (
-                <progress value={uploadProgress} max="100">{uploadProgress}%</progress>
-              )}
-              {avatarUrl && <img src={avatarUrl} alt="Uploaded Avatar" style={{ width: '100px', height: '100px' }} />}
+              <button type="button" className="bg-blue-500 text-white hover:bg-blue-600 cursor-pointer p-2 rounded mr-4" onClick={() => document.getElementById('fileInput').click()}>Choose file</button>
+              {avatarUrl && <img src={avatarUrl} alt="Uploaded Avatar" style={{ width: '50px', height: 'auto', objectFit: 'contain' }} />}
             </div>
             <button
               type="submit"

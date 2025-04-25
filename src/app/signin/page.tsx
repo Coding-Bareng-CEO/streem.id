@@ -3,12 +3,14 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 import Image from 'next/image';
+import { useAvatar } from '../../context/AvatarContext';
 
 export default function SignIn() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const { setAvatarUrl, setUsername, setEmail: setEmailContext } = useAvatar();
 
   useEffect(() => {
     const defaultEmail = process.env.NEXT_PUBLIC_DEFAULT_EMAIL || '';
@@ -23,8 +25,16 @@ export default function SignIn() {
     if (error){
       setError(error.message);
     } else{
-      //login berhasil, maka ambil data tambahan dari supabase user table
+      // Login successful, fetch additional user data from Supabase user table
       const { data: userDetails } = await supabase.from('users').select('*').eq('id', user?.id).single();
+      console.log(userDetails);
+    
+      if (userDetails) {
+        setAvatarUrl(userDetails.avatar_url);
+        setUsername(userDetails.username);
+        setEmailContext(userDetails.email);
+        console.log(userDetails);
+      }
       window.location.href = "/";
     }
   };
