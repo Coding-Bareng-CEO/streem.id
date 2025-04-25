@@ -16,10 +16,10 @@ export default function SignUp() {
   const [isPasswordValid, setIsPasswordValid] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [animationData, setAnimationData] = useState(null);
+  const [animationData, setAnimationData] = useState<any | null>(null);
   const [username, setUsername] = useState('');
   const [fullname, setFullname] = useState('');
-  const [avatarUrl, setAvatarUrl] = useState(null);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
 
