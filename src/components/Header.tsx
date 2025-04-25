@@ -4,7 +4,7 @@ import Image from 'next/image';
 const Header = () => {
   return (
     <header className="header flex justify-between items-center p-4 border-b">
-      <Image src="/streem.png?v=3" alt="Logo" width={50} height={50} className="mr-2" />
+      <Image src="/streem.png?v=3" alt="Logo" width={50} height={50} className="mr-2" priority/>
       <nav>
         <ul className="flex space-x-4">
           <li><a href="#" className="text-blue-500">For you</a></li>

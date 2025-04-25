@@ -20,7 +20,8 @@ const TweetList = () => {
         .select(`id, content, user_id, users!inner(fullname, username, avatar_url)`);
 
       if (error) {
-        console.error('Error fetching tweets:', error);
+        // Display a message on the web page if there are no tweets
+        setTweets([]); // Ensure tweets are empty
       } else {
         setTweets(data as unknown as TweetType[]);
       }
@@ -31,16 +32,20 @@ const TweetList = () => {
 
   return (
     <div className="tweet-list">
-      {tweets.map(tweet => (
-        <Tweet
-          key={tweet.id}
-          content={tweet.content}
-          userId={tweet.user_id}
-          fullname={tweet.users.fullname}
-          username={tweet.users.username}
-          avatarUrl={tweet.users.avatar_url || null}
-        />
-      ))}
+      {tweets.length === 0 ? (
+        <p>No tweets available.</p>
+      ) : (
+        tweets.map(tweet => (
+          <Tweet
+            key={tweet.id}
+            content={tweet.content}
+            userId={tweet.user_id}
+            fullname={tweet.users.fullname}
+            username={tweet.users.username}
+            avatarUrl={tweet.users.avatar_url || null}
+          />
+        ))
+      )}
     </div>
   );
 };

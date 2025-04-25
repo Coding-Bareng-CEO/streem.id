@@ -38,7 +38,7 @@ export default function Home() {
             <InputBox />
           ) : (
             <p>
-              Please <a href="/signin" style={{ color: 'blue' }}>sign up</a> or <a href="/signin" style={{ color: 'blue' }}>sign in</a> to post a message.
+              Please <a href="/signup" style={{ color: 'blue' }}>sign up</a> or <a href="/signin" style={{ color: 'blue' }}>sign in</a> to post a message.
             </p>
           )}
           <TweetList />

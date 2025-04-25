@@ -20,6 +20,7 @@ export default function SignUp() {
   const [username, setUsername] = useState('');
   const [fullname, setFullname] = useState('');
   const [avatarUrl, setAvatarUrl] = useState(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   useEffect(() => {
     fetch('/anim/success.json')
@@ -55,22 +56,39 @@ export default function SignUp() {
     setShowPassword(!showPassword);
   };
 
-  const handleAvatarUpload = async (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const fileName = `${Date.now()}_${file.name}`;
+  const uploadFileWithProgress = async (file: File) => {
+    try {
+      const timestamp = Date.now();
       const { data, error } = await supabase.storage
         .from('streem')
-        .upload(`users/${fileName}`, file);
+        .upload(`users/${timestamp}_${file.name}`, file);
+
       if (error) {
-        console.log(error);
-        setError('Failed to upload avatar.');
-      } else {
-        const { publicURL } = supabase.storage
-          .from('streem')
-          .getPublicUrl(`users/${fileName}`);
-        setAvatarUrl(publicURL);
+        throw new Error('Failed to upload avatar.');
       }
+
+      return data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    const file = files[0];
+    setError(''); // Reset error message
+    setUploadProgress(0); // Reset progress
+    try {
+      const response = await uploadFileWithProgress(file);
+      const { data } = supabase.storage
+        .from('streem')
+        .getPublicUrl(response.path);
+      setAvatarUrl(data.publicUrl);
+    } catch (error) {
+      console.log(error);
+      setError('Failed to upload avatar.');
     }
   };
 
@@ -106,7 +124,7 @@ export default function SignUp() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-80">
-        <Image src="/streem.png" alt="Streem Logo" width={100} height={100} className="mx-auto mb-4" />
+        <Image src="/streem.png" alt="Streem Logo" width={100} height={100} className="mx-auto mb-4" priority />
         {!success && <h1 className="text-2xl font-bold mb-6 text-center">Sign Up</h1>}
         {success ? (
           <div className="text-center">
@@ -168,12 +186,14 @@ export default function SignUp() {
                 {showPassword ? "🙈" : "👁️"}
               </span>
             </div>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleAvatarUpload}
-              className="mb-4"
-            />
+            <div className="mb-4">
+              <input type="file" onChange={handleAvatarUpload} style={{ display: 'none' }} id="fileInput" />
+              <button type="button" className="bg-blue-500 text-white hover:bg-blue-600 cursor-pointer p-2 rounded" onClick={() => document.getElementById('fileInput').click()}>Choose file</button>
+              {uploadProgress > 0 && uploadProgress < 100 && (
+                <progress value={uploadProgress} max="100">{uploadProgress}%</progress>
+              )}
+              {avatarUrl && <img src={avatarUrl} alt="Uploaded Avatar" style={{ width: '100px', height: '100px' }} />}
+            </div>
             <button
               type="submit"
               className={`p-2 rounded ${isEmailValid && isPasswordValid && !isLoading ? 'bg-blue-500 text-white hover:bg-blue-600 cursor-pointer' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
