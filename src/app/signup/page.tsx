@@ -194,7 +194,12 @@ export default function SignUp() {
             </div>
             <div className="mb-4 flex items-center">
               <input type="file" onChange={handleAvatarUpload} style={{ display: 'none' }} id="fileInput" />
-              <button type="button" className="bg-blue-500 text-white hover:bg-blue-600 cursor-pointer p-2 rounded mr-4" onClick={() => document.getElementById('fileInput').click()}>Choose file</button>
+              <button type="button" className="bg-blue-500 text-white hover:bg-blue-600 cursor-pointer p-2 rounded mr-4" onClick={() => {
+                const fileInput = document.getElementById('fileInput');
+                if (fileInput) {
+                  fileInput.click();
+                }
+              }}>Choose file</button>
               {avatarUrl && <img src={avatarUrl} alt="Uploaded Avatar" style={{ width: '50px', height: 'auto', objectFit: 'contain' }} />}
             </div>
             <button
