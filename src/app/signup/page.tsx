@@ -121,7 +121,9 @@ export default function SignUp() {
       }
     } else {
       setIsLoading(false);
-      setError(error.message);
+      if (error) {
+        setError(error.message);
+      }
     }
   };
 
