@@ -17,6 +17,9 @@ export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [animationData, setAnimationData] = useState(null);
+  const [username, setUsername] = useState('');
+  const [fullname, setFullname] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState(null);
 
   useEffect(() => {
     fetch('/anim/success.json')
@@ -52,18 +55,51 @@ export default function SignUp() {
     setShowPassword(!showPassword);
   };
 
+  const handleAvatarUpload = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const fileName = `${Date.now()}_${file.name}`;
+      const { data, error } = await supabase.storage
+        .from('streem')
+        .upload(`users/${fileName}`, file);
+      if (error) {
+        console.log(error);
+        setError('Failed to upload avatar.');
+      } else {
+        const { publicURL } = supabase.storage
+          .from('streem')
+          .getPublicUrl(`users/${fileName}`);
+        setAvatarUrl(publicURL);
+      }
+    }
+  };
+
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateEmail() || !validatePassword()) return;
 
     setIsLoading(true);
-    const { error } = await supabase.auth.signUp({ email, password });
-    setIsLoading(false);
-
-    if (error) {
-      setError(error.message);
+    const { data: signUpData, error } = await supabase.auth.signUp({ email, password });
+    if (!error && signUpData.user) {
+      // Insert new user data into the users table
+      console.log(avatarUrl);
+      const { error: insertError } = await supabase.from('users').insert({
+        id: signUpData.user.id,
+        email: signUpData.user.email,
+        username,
+        fullname,
+        avatar_url: avatarUrl,
+        // Add other fields as necessary
+      });
+      setIsLoading(false);
+      if (insertError) {
+        setError(insertError.message);
+      } else {
+        setSuccess('Pendaftaran berhasil! Silakan <a href="/signin" class="text-blue-500 hover:underline">login di sini</a>.');
+      }
     } else {
-      setSuccess('Pendaftaran berhasil! Silakan <a href="/signin" class="text-blue-500 hover:underline">login di sini</a>.');
+      setIsLoading(false);
+      setError(error.message);
     }
   };
 
@@ -91,6 +127,22 @@ export default function SignUp() {
         ) : (
           <form onSubmit={handleSignUp} className="flex flex-col">
             <input
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              className="mb-4 p-2 border border-gray-300 rounded"
+            />
+            <input
+              type="text"
+              placeholder="Full Name"
+              value={fullname}
+              onChange={(e) => setFullname(e.target.value)}
+              required
+              className="mb-4 p-2 border border-gray-300 rounded"
+            />
+            <input
               type="email"
               placeholder="Email"
               value={email}
@@ -116,6 +168,12 @@ export default function SignUp() {
                 {showPassword ? "🙈" : "👁️"}
               </span>
             </div>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleAvatarUpload}
+              className="mb-4"
+            />
             <button
               type="submit"
               className={`p-2 rounded ${isEmailValid && isPasswordValid && !isLoading ? 'bg-blue-500 text-white hover:bg-blue-600 cursor-pointer' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
@@ -140,7 +198,7 @@ export default function SignUp() {
                     <path
                       className="opacity-75"
                       fill="currentColor"
-                      d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                      d="M4 12a8 8 0 018-8v8H4z"
                     ></path>
                   </svg>
                   Mendaftarkan...

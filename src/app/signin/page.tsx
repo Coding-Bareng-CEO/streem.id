@@ -19,10 +19,12 @@ export default function SignIn() {
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data: { user }, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error){
       setError(error.message);
     } else{
+      //login berhasil, maka ambil data tambahan dari supabase user table
+      const { data: userDetails } = await supabase.from('users').select('*').eq('id', user?.id).single();
       window.location.href = "/";
     }
   };
